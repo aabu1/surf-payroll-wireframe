@@ -12,7 +12,7 @@
     color: #1a1a1a;
     font-size: 14px;
     line-height: 1.5;
-    padding-bottom: 120px;
+    padding-bottom: 260px;
     min-width: 1200px;
   }
 
@@ -122,6 +122,252 @@
   .step.active .step-num { background: #111; color: #fff; }
   .step-line { width: 48px; height: 2px; margin: 0 10px; background: #eee; }
   .step-line.done { background: #22c55e; }
+
+  /* ── #1: Scroll Progress on Step 2 ── */
+  .step.active { position: relative; }
+  .step-progress-track {
+    position: absolute;
+    bottom: -12px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #eee;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .step-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: #e8740e;
+    border-radius: 2px;
+    transition: width 0.15s ease-out;
+  }
+  .step-progress-fill.complete {
+    background: #22c55e;
+  }
+  @keyframes pulse-green {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+    50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+  }
+  .step.active .step-num.pulse-complete {
+    background: #22c55e;
+    animation: pulse-green 1s ease-in-out 2;
+  }
+
+  /* ── #5: Row toggle animation ── */
+  .emp-table tbody tr {
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .emp-table tbody tr.row-entering {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  .emp-table tbody tr.row-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .emp-table tbody tr.row-exiting {
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+  }
+
+  /* ── #6: Cash bar fill comparison ── */
+  .cash-bar-track {
+    width: 160px;
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-left: 16px;
+  }
+  .cash-bar-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 4px;
+    transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1), background 0.5s ease;
+  }
+  .cash-bar-fill.sufficient { background: #4ade80; }
+  .cash-bar-fill.caution { background: #f59e0b; }
+  .cash-bar-fill.critical { background: #ef4444; }
+  .cash-bar-label {
+    font-size: 10px;
+    color: #888;
+    margin-left: 8px;
+    white-space: nowrap;
+  }
+
+  /* ── #4: I-9 countdown pulse ── */
+  @keyframes pulse-urgent {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+  .countdown-timer {
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: 6px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .countdown-normal { background: #fee2e2; color: #991b1b; }
+  .countdown-critical {
+    background: #ef4444; color: #fff;
+    animation: pulse-urgent 1.5s ease-in-out infinite;
+  }
+
+  /* ── #9: Deadline urgency escalation ── */
+  .footer-countdown.urgency-green { background: #dcfce7; color: #166534; }
+  .footer-countdown.urgency-orange { background: #fff7ed; color: #ea580c; }
+  .footer-countdown.urgency-red { background: #fee2e2; color: #dc2626; }
+  .footer-countdown.urgency-critical {
+    background: #ef4444; color: #fff;
+    animation: pulse-urgent 1s ease-in-out infinite;
+  }
+
+  /* ── #10: Post-submit success state ── */
+  @keyframes checkmark-draw {
+    0% { stroke-dashoffset: 50; }
+    100% { stroke-dashoffset: 0; }
+  }
+  @keyframes scale-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes fade-up-in {
+    0% { transform: translateY(12px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  .success-state { text-align: center; padding: 32px 28px; }
+  .success-check {
+    width: 64px; height: 64px;
+    margin: 0 auto 16px;
+    animation: scale-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  .success-check svg {
+    width: 64px; height: 64px;
+  }
+  .success-check .check-path {
+    stroke-dasharray: 50;
+    stroke-dashoffset: 50;
+    animation: checkmark-draw 0.5s ease 0.3s forwards;
+  }
+  .success-title {
+    font-size: 18px; font-weight: 700; color: #111;
+    animation: fade-up-in 0.4s ease 0.4s both;
+  }
+  .success-subtitle {
+    font-size: 13px; color: #888; margin-top: 4px;
+    animation: fade-up-in 0.4s ease 0.5s both;
+  }
+  .success-receipt {
+    background: #fafafa; border: 1px solid #eee; border-radius: 10px;
+    padding: 16px 20px; margin: 20px auto 0; max-width: 320px; text-align: left;
+    animation: fade-up-in 0.4s ease 0.6s both;
+  }
+  .success-receipt .modal-row { font-size: 13px; }
+  .success-receipt-id {
+    font-size: 11px; color: #bbb; text-align: center; margin-top: 12px;
+    animation: fade-up-in 0.4s ease 0.7s both;
+  }
+  .success-footer {
+    padding: 0 28px 24px; display: flex; justify-content: center; gap: 10px;
+    animation: fade-up-in 0.4s ease 0.8s both;
+  }
+  .btn-success-primary {
+    padding: 10px 24px; border: none; border-radius: 8px;
+    background: #e8740e; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .btn-success-primary:hover { background: #d4680d; }
+  .btn-success-secondary {
+    padding: 10px 20px; border: 1px solid #ddd; border-radius: 8px;
+    background: #fff; font-size: 13px; font-weight: 500; color: #666; cursor: pointer;
+  }
+  .btn-success-secondary:hover { border-color: #999; color: #111; }
+
+  /* ── Progressive Disclosure ── */
+  .expand-toggle {
+    font-size: 12px; font-weight: 500; color: #666;
+    background: none; border: 1px solid #e5e5e5; border-radius: 6px;
+    padding: 5px 12px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 4px;
+    transition: all 0.2s;
+  }
+  .expand-toggle:hover { border-color: #bbb; color: #333; }
+  .expand-toggle svg { transition: transform 0.2s; }
+  .expand-toggle.expanded svg { transform: rotate(180deg); }
+
+  .collapsible-body {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.35s ease, opacity 0.25s ease, margin 0.3s ease;
+    margin-top: 0;
+  }
+  .collapsible-body.open {
+    max-height: 600px;
+    opacity: 1;
+    margin-top: 8px;
+  }
+
+  .insights-extra {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.35s ease, opacity 0.25s ease, margin 0.3s ease;
+    margin-top: 0;
+  }
+  .insights-extra.open {
+    max-height: 400px;
+    opacity: 1;
+    margin-top: 12px;
+  }
+
+  .insights-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+
+  .alert-expandable {
+    cursor: pointer;
+    user-select: none;
+  }
+  .alert-expandable .alert-title {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .alert-expand-icon {
+    width: 14px; height: 14px; color: inherit; opacity: 0.5;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .alert-expandable.open .alert-expand-icon { transform: rotate(180deg); }
+
+  .fin-details {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.25s ease;
+  }
+  .fin-details.open {
+    max-height: 300px;
+    opacity: 1;
+  }
+  .fin-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+  }
+  .fin-card-header:hover { opacity: 0.8; }
+  .fin-expand-icon {
+    width: 14px; height: 14px; color: #999;
+    transition: transform 0.2s;
+  }
+  .fin-card.open .fin-expand-icon { transform: rotate(180deg); }
 
   /* ── Content (full width) ── */
   .content { padding: 24px 28px; }
@@ -566,6 +812,36 @@
     font-size: 12px; font-weight: 500;
     padding: 4px 10px; border-radius: 6px;
     display: flex; align-items: center; gap: 5px;
+    position: relative;
+    cursor: default;
+  }
+  .modal-alert-badge:hover .badge-tip { display: block; }
+  .badge-tip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 6px;
+    white-space: normal;
+    width: 220px;
+    z-index: 10;
+    line-height: 1.5;
+    text-align: left;
+  }
+  .badge-tip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: #111;
   }
   .modal-alert-badge-yellow { background: #fef9c3; color: #92400e; }
   .modal-alert-badge-red { background: #fee2e2; color: #991b1b; }
@@ -666,8 +942,9 @@
   </div>
   <div class="step-line done"></div>
   <div class="step active">
-    <div class="step-num">2</div>
+    <div class="step-num" id="step2-num">2</div>
     Review & Submit
+    <div class="step-progress-track"><div class="step-progress-fill" id="step-progress"></div></div>
   </div>
   <div class="step-line"></div>
   <div class="step">
@@ -680,7 +957,7 @@
 <div class="content">
 
 <!-- Collapsible Design Rationale -->
-<div class="rationale" id="rationale">
+<div class="rationale collapsed" id="rationale">
   <div class="rationale-header" onclick="document.getElementById('rationale').classList.toggle('collapsed')">
     <div class="rationale-title">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
@@ -714,55 +991,27 @@
     <div class="metric">
       <div class="metric-label">Total Net Pay</div>
       <div class="metric-value">$18,032.27</div>
-      <div class="metric-change mc-neutral">— No change vs. last period</div>
-      <div class="metric-prev">Last: $18,032.27</div>
+      <div class="metric-change mc-neutral">— No change</div>
     </div>
     <div class="metric">
       <div class="metric-label">Total Taxes</div>
       <div class="metric-value">$2,278.33</div>
-      <div class="metric-change mc-down">&#8595; $11.44 vs. last period</div>
-      <div class="metric-prev">Last: $2,289.77</div>
+      <div class="metric-change mc-down">&#8595; $11.44</div>
     </div>
     <div class="metric">
       <div class="metric-label">Total Employer Cost</div>
       <div class="metric-value">$20,655.60</div>
-      <div class="metric-change mc-down">&#8595; $11.44 vs. last period</div>
-      <div class="metric-prev">Last: $20,667.04</div>
+      <div class="metric-change mc-down">&#8595; $11.44</div>
     </div>
     <div class="metric">
-      <div class="metric-label">Employees Paid</div>
-      <div class="metric-value">10</div>
-      <div class="metric-change mc-neutral">— Same as last period</div>
-      <div class="metric-prev">4 not eligible this run</div>
+      <div class="metric-label">Employees</div>
+      <div class="metric-value">10 <span style="font-size:13px;font-weight:400;color:#999">/ 14 total</span></div>
+      <div class="metric-change mc-neutral">4 not eligible</div>
     </div>
   </div>
 
-  <!-- AI Insights as structured cards -->
+  <!-- AI Insights — flagged items visible, rest expandable -->
   <div class="insights-grid">
-    <div class="insight-card">
-      <div class="insight-icon insight-icon-green">&#8595;</div>
-      <div class="insight-content">
-        <div class="insight-label">Cash Requirement Change</div>
-        <div class="insight-value">-$11.44</div>
-        <div class="insight-detail">Driven by reduced employer tax obligations. Federal Unemployment Tax <strong>-$5.76</strong>, CA State Unemployment <strong>-$5.38</strong>.</div>
-      </div>
-    </div>
-    <div class="insight-card">
-      <div class="insight-icon insight-icon-blue">3</div>
-      <div class="insight-content">
-        <div class="insight-label">Employees With Changes</div>
-        <div class="insight-value">Jacob, Lucas, Olivia</div>
-        <div class="insight-detail">Tax reductions of <strong>$7.26</strong>, <strong>$0</strong>, and <strong>$4.18</strong> respectively. No benefit or deduction changes.</div>
-      </div>
-    </div>
-    <div class="insight-card">
-      <div class="insight-icon insight-icon-gray">&#10003;</div>
-      <div class="insight-content">
-        <div class="insight-label">Benefits & Deductions</div>
-        <div class="insight-value">No changes</div>
-        <div class="insight-detail">All 401k and medical elections unchanged. Post-tax deductions consistent across all employees.</div>
-      </div>
-    </div>
     <div class="insight-card highlight">
       <div class="insight-icon insight-icon-amber">!</div>
       <div class="insight-content">
@@ -780,18 +1029,54 @@
       </div>
     </div>
     <div class="insight-card">
-      <div class="insight-icon insight-icon-purple">%</div>
+      <div class="insight-icon insight-icon-green">&#8595;</div>
       <div class="insight-content">
-        <div class="insight-label">Tax-to-Pay Ratio</div>
-        <div class="insight-value">12.6%</div>
-        <div class="insight-detail">Effective total tax rate this period. Within normal range — last period was <strong>12.7%</strong>.</div>
+        <div class="insight-label">Cash Change</div>
+        <div class="insight-value">-$11.44</div>
+        <div class="insight-detail">Reduced employer tax obligations (FUTA, CA SUTA).</div>
       </div>
     </div>
   </div>
-  <div class="ai-source">
-    <span class="ai-source-badge">AI</span>
-    <span class="ai-source-text">Insights generated from payroll comparison analysis &middot; Last updated just now</span>
-    <span class="decision-callout">D1 <span class="decision-tip">Structured AI insight cards, not a text blob</span></span>
+
+  <div class="insights-extra" id="insights-extra">
+    <div class="insights-grid">
+      <div class="insight-card">
+        <div class="insight-icon insight-icon-blue">3</div>
+        <div class="insight-content">
+          <div class="insight-label">Employees With Changes</div>
+          <div class="insight-value">Jacob, Lucas, Olivia</div>
+          <div class="insight-detail">Tax reductions of <strong>$7.26</strong>, <strong>$0</strong>, <strong>$4.18</strong>. No benefit changes.</div>
+        </div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-icon insight-icon-gray">&#10003;</div>
+        <div class="insight-content">
+          <div class="insight-label">Benefits & Deductions</div>
+          <div class="insight-value">No changes</div>
+          <div class="insight-detail">All 401k and medical elections unchanged.</div>
+        </div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-icon insight-icon-purple">%</div>
+        <div class="insight-content">
+          <div class="insight-label">Tax-to-Pay Ratio</div>
+          <div class="insight-value">12.6%</div>
+          <div class="insight-detail">Within normal range (last: 12.7%).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insights-toggle-row">
+    <div class="ai-source" style="border:none;padding:0;margin:0">
+      <span class="ai-source-badge">AI</span>
+      <span class="ai-source-text">Payroll comparison analysis</span>
+      <span class="decision-callout">D1 <span class="decision-tip">Structured AI insight cards, not a text blob</span></span>
+    </div>
+    <button class="expand-toggle" id="insights-toggle" onclick="toggleSection('insights-extra','insights-toggle','3 more insights')">
+      <span>3 more insights</span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+    </button>
   </div>
 </div>
 
@@ -802,42 +1087,51 @@
     <span class="decision-callout">D2 <span class="decision-tip">Compliance alerts surfaced before employee data</span></span>
   </div>
 
-  <div class="alert alert-yellow">
-    <div class="alert-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" fill="#f59e0b"/><line x1="12" y1="9" x2="12" y2="13" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="#fff"/></svg></div>
-    <div class="alert-content">
-      <div class="alert-title">2 states have incomplete tax registration</div>
-      <div class="alert-body">Employees in <strong>Alaska</strong> and <strong>Alabama</strong> may have incorrect withholdings. Unemployment tax account numbers and withholding rates are missing.</div>
-      <div class="alert-actions">
-        <a href="#" class="alert-link">Fix now — Go to State Taxes &#8594;</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="alert alert-orange">
-    <div class="alert-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#f97316"/><line x1="12" y1="8" x2="12" y2="12" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16" r="1" fill="#fff"/></svg></div>
-    <div class="alert-content">
-      <div class="alert-title">4 employees excluded from this payroll</div>
-      <ul class="alert-list">
-        <li><strong>Emma Wilson</strong> — Waiting for employee to complete onboarding (Start date: Dec 01, 2025)</li>
-        <li><strong>Alex Chen</strong> — Setup not completed by employer</li>
-        <li><strong>Sarah Kim</strong> — Setup not completed by employer</li>
-        <li><strong>David Park</strong> — Joining date falls on Mar 26, 2026</li>
-      </ul>
-      <div class="alert-actions">
-        <a href="#" class="alert-link">Review excluded employees &#8594;</a>
-        <a href="#" class="alert-link-secondary">Send onboarding reminders</a>
-      </div>
-    </div>
-  </div>
-
   <div class="alert alert-red">
     <div class="alert-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#ef4444"/><line x1="12" y1="8" x2="12" y2="12" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16" r="1" fill="#fff"/></svg></div>
     <div class="alert-content">
-      <div class="alert-title">1 employee has a pending I-9 — deadline: March 17, 2026</div>
-      <div class="alert-body"><strong>Hannah Coleman</strong> skipped I-9 verification during onboarding. Federal law requires completion within 3 business days of start date.</div>
-      <div class="alert-actions">
+      <div class="alert-title">Pending I-9 — Hannah Coleman — deadline: March 17, 2026</div>
+      <div class="alert-actions" style="margin-top:4px">
         <a href="#" class="alert-link">Complete I-9 now &#8594;</a>
-        <a href="#" class="alert-link-secondary">Send reminder to employee</a>
+        <a href="#" class="alert-link-secondary">Send reminder</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-yellow alert-expandable" id="alert-yellow" onclick="toggleAlert('alert-yellow')">
+    <div class="alert-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" fill="#f59e0b"/><line x1="12" y1="9" x2="12" y2="13" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="#fff"/></svg></div>
+    <div class="alert-content">
+      <div class="alert-title">
+        2 states have incomplete tax registration (AK, AL)
+        <svg class="alert-expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+      </div>
+      <div class="collapsible-body" id="alert-yellow-body">
+        <div class="alert-body">Unemployment tax account numbers and withholding rates are missing. Employees in these states may have incorrect withholdings.</div>
+      </div>
+      <div class="alert-actions" style="margin-top:4px">
+        <a href="#" class="alert-link" onclick="event.stopPropagation()">Fix now — State Taxes &#8594;</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-orange alert-expandable" id="alert-orange" onclick="toggleAlert('alert-orange')">
+    <div class="alert-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#f97316"/><line x1="12" y1="8" x2="12" y2="12" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16" r="1" fill="#fff"/></svg></div>
+    <div class="alert-content">
+      <div class="alert-title">
+        4 employees excluded from this payroll
+        <svg class="alert-expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+      </div>
+      <div class="collapsible-body" id="alert-orange-body">
+        <ul class="alert-list">
+          <li><strong>Emma Wilson</strong> — Waiting for employee to complete onboarding</li>
+          <li><strong>Alex Chen</strong> — Setup not completed by employer</li>
+          <li><strong>Sarah Kim</strong> — Setup not completed by employer</li>
+          <li><strong>David Park</strong> — Joining date falls on Mar 26, 2026</li>
+        </ul>
+        <div class="alert-actions">
+          <a href="#" class="alert-link" onclick="event.stopPropagation()">Review excluded employees &#8594;</a>
+          <a href="#" class="alert-link-secondary" onclick="event.stopPropagation()">Send onboarding reminders</a>
+        </div>
       </div>
     </div>
   </div>
@@ -925,33 +1219,45 @@
 <!-- SECTION 4: FINANCIAL SUMMARY -->
 <div class="section">
   <div class="section-label">Financial Summary</div>
-  <div class="fin-comparison-label">All amounts compared to last payroll (03/02 – 03/08)</div>
+  <div class="fin-comparison-label">Compared to last payroll (03/02 – 03/08) · Click to expand line items</div>
   <div class="fin-grid">
-    <div class="fin-card">
-      <div class="fin-title">Accounting Summary</div>
-      <div class="fin-row"><span class="fin-label">Net Pay</span><span class="fin-val">$18,032.27 <span class="fin-delta">—</span></span></div>
-      <div class="fin-row"><span class="fin-label">Benefits Contributions</span><span class="fin-val">$125.00 <span class="fin-delta">—</span></span></div>
-      <div class="fin-row"><span class="fin-label">Employee Taxes</span><span class="fin-val">$1,351.53 <span class="fin-delta fin-delta-down">-$11.44</span></span></div>
-      <div class="fin-row"><span class="fin-label">Company Taxes</span><span class="fin-val">$926.80 <span class="fin-delta">—</span></span></div>
-      <div class="fin-row"><span class="fin-label">Post Deduction</span><span class="fin-val">$220.00 <span class="fin-delta">—</span></span></div>
-      <div class="fin-row"><span class="fin-label">Cash Tips</span><span class="fin-val">$0 <span class="fin-delta">—</span></span></div>
-      <div class="fin-row fin-total"><span class="fin-label">Total Payroll Liability</span><span class="fin-val">$20,655.60 <span class="fin-delta fin-delta-down">-$11.44</span></span></div>
+    <div class="fin-card" id="fin-accounting" onclick="toggleFinCard('fin-accounting')">
+      <div class="fin-card-header">
+        <div class="fin-title" style="margin-bottom:0;padding-bottom:0;border:none">Accounting Summary</div>
+        <svg class="fin-expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+      </div>
+      <div class="fin-row fin-total" style="margin-top:8px"><span class="fin-label">Total Payroll Liability</span><span class="fin-val">$20,655.60 <span class="fin-delta fin-delta-down">-$11.44</span></span></div>
+      <div class="fin-details" id="fin-accounting-details">
+        <div class="fin-row"><span class="fin-label">Net Pay</span><span class="fin-val">$18,032.27 <span class="fin-delta">—</span></span></div>
+        <div class="fin-row"><span class="fin-label">Benefits</span><span class="fin-val">$125.00 <span class="fin-delta">—</span></span></div>
+        <div class="fin-row"><span class="fin-label">Employee Taxes</span><span class="fin-val">$1,351.53 <span class="fin-delta fin-delta-down">-$11.44</span></span></div>
+        <div class="fin-row"><span class="fin-label">Company Taxes</span><span class="fin-val">$926.80 <span class="fin-delta">—</span></span></div>
+        <div class="fin-row"><span class="fin-label">Post Deduction</span><span class="fin-val">$220.00 <span class="fin-delta">—</span></span></div>
+      </div>
     </div>
-    <div class="fin-card">
-      <div class="fin-title">Bank Withdrawal Summary</div>
-      <div class="fin-row"><span class="fin-label">Direct Deposit Amount</span><span class="fin-val">$18,032.27 <span class="fin-delta">—</span></span></div>
-      <div class="fin-row"><span class="fin-label">Taxes Amount</span><span class="fin-val">$2,278.33 <span class="fin-delta fin-delta-down">-$11.44</span></span></div>
-      <div class="fin-row"><span class="fin-label">Garnishments</span><span class="fin-val">$0 <span class="fin-delta">—</span></span></div>
-      <div class="fin-row fin-total"><span class="fin-label">Cash Requirement</span><span class="fin-val">$20,310.60 <span class="fin-delta fin-delta-down">-$11.44</span></span></div>
+    <div class="fin-card" id="fin-withdrawal" onclick="toggleFinCard('fin-withdrawal')">
+      <div class="fin-card-header">
+        <div class="fin-title" style="margin-bottom:0;padding-bottom:0;border:none">Bank Withdrawal</div>
+        <svg class="fin-expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+      </div>
+      <div class="fin-row fin-total" style="margin-top:8px"><span class="fin-label">Cash Requirement</span><span class="fin-val">$20,310.60 <span class="fin-delta fin-delta-down">-$11.44</span></span></div>
+      <div class="fin-details" id="fin-withdrawal-details">
+        <div class="fin-row"><span class="fin-label">Direct Deposit</span><span class="fin-val">$18,032.27 <span class="fin-delta">—</span></span></div>
+        <div class="fin-row"><span class="fin-label">Taxes</span><span class="fin-val">$2,278.33 <span class="fin-delta fin-delta-down">-$11.44</span></span></div>
+        <div class="fin-row"><span class="fin-label">Garnishments</span><span class="fin-val">$0 <span class="fin-delta">—</span></span></div>
+      </div>
     </div>
-    <div class="fin-card">
-      <div class="fin-title">Employer Handled Obligations</div>
-      <div class="fin-row"><span class="fin-label">Benefits Contributions</span><span class="fin-val">$125.00 <span class="fin-delta">—</span></span></div>
-      <div class="fin-row"><span class="fin-label">Unemployment Tax</span><span class="fin-val">$0 <span class="fin-delta">—</span></span></div>
-      <div class="fin-row"><span class="fin-label">Garnishments (Managed)</span><span class="fin-val">$0 <span class="fin-delta">—</span></span></div>
-      <div class="fin-row"><span class="fin-label">Other Deductions</span><span class="fin-val">$220.00 <span class="fin-delta">—</span></span></div>
-      <div class="fin-row"><span class="fin-label">Cash Tips</span><span class="fin-val">$0 <span class="fin-delta">—</span></span></div>
-      <div class="fin-row fin-total"><span class="fin-label">Total</span><span class="fin-val">$345.00 <span class="fin-delta">—</span></span></div>
+    <div class="fin-card" id="fin-obligations" onclick="toggleFinCard('fin-obligations')">
+      <div class="fin-card-header">
+        <div class="fin-title" style="margin-bottom:0;padding-bottom:0;border:none">Employer Obligations</div>
+        <svg class="fin-expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+      </div>
+      <div class="fin-row fin-total" style="margin-top:8px"><span class="fin-label">Total</span><span class="fin-val">$345.00 <span class="fin-delta">—</span></span></div>
+      <div class="fin-details" id="fin-obligations-details">
+        <div class="fin-row"><span class="fin-label">Benefits</span><span class="fin-val">$125.00 <span class="fin-delta">—</span></span></div>
+        <div class="fin-row"><span class="fin-label">Unemployment Tax</span><span class="fin-val">$0 <span class="fin-delta">—</span></span></div>
+        <div class="fin-row"><span class="fin-label">Other Deductions</span><span class="fin-val">$220.00 <span class="fin-delta">—</span></span></div>
+      </div>
     </div>
   </div>
 </div>
@@ -969,6 +1275,8 @@
     <div class="cash-left">
       <span class="cash-label">Cash Requirement</span>
       <span class="cash-value">$20,310.60</span>
+      <div class="cash-bar-track"><div class="cash-bar-fill" id="cash-bar-fill"></div></div>
+      <span class="cash-bar-label">42% of balance</span>
       <span class="decision-callout" style="background:rgba(99,72,255,0.15);border-color:rgba(99,72,255,0.3);color:#c4b5fd;margin-left:12px;">D5 <span class="decision-tip" style="bottom:auto;top:calc(100% + 6px);">Bank balance alongside cash requirement</span></span>
     </div>
     <div class="cash-right">
@@ -1033,9 +1341,15 @@
       </div>
 
       <div class="modal-alert-count">
-        <span class="modal-alert-badge modal-alert-badge-yellow">&#9888; 2 warnings</span>
-        <span class="modal-alert-badge modal-alert-badge-red">&#9679; 1 critical</span>
-        <span class="modal-alert-badge modal-alert-badge-green">&#10003; Bank balance sufficient</span>
+        <span class="modal-alert-badge modal-alert-badge-yellow">&#9888; 2 warnings
+          <span class="badge-tip">Incomplete state tax registration in Alaska and Alabama. Unemployment tax account numbers missing.</span>
+        </span>
+        <span class="modal-alert-badge modal-alert-badge-red">&#9679; 1 critical
+          <span class="badge-tip">Hannah Coleman has a pending I-9 verification. Federal deadline: March 17, 2026 (3 business days from start date).</span>
+        </span>
+        <span class="modal-alert-badge modal-alert-badge-green">&#10003; Bank balance sufficient
+          <span class="badge-tip">Checking ****8902 has $47,822.14 available. Cash requirement is $20,310.60. Balance as of 4:12 PM ET today.</span>
+        </span>
       </div>
 
       <div>
@@ -1054,11 +1368,14 @@
   </div>
 </div>
 
-<!-- Scroll-to-bottom detection -->
+<!-- All interactions -->
 <script>
+  // ── Scroll-gated submit ──
   var sentinel = document.getElementById('scroll-sentinel');
   var submitBtn = document.getElementById('submit-btn');
   var scrollHint = document.getElementById('scroll-hint');
+  var stepProgress = document.getElementById('step-progress');
+  var step2Num = document.getElementById('step2-num');
 
   var observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
@@ -1066,11 +1383,110 @@
         submitBtn.classList.remove('disabled');
         submitBtn.classList.add('enabled');
         scrollHint.classList.add('hidden');
+        // #1: Complete the progress bar + pulse
+        stepProgress.style.width = '100%';
+        stepProgress.classList.add('complete');
+        step2Num.classList.add('pulse-complete');
       }
     });
   }, { threshold: 0.1 });
-
   observer.observe(sentinel);
+
+  // #1: Scroll progress on step bar
+  window.addEventListener('scroll', function() {
+    if (stepProgress.classList.contains('complete')) return;
+    var contentEl = document.querySelector('.content');
+    var rect = contentEl.getBoundingClientRect();
+    var total = contentEl.scrollHeight - window.innerHeight;
+    var scrolled = -rect.top + 200;
+    var pct = Math.min(Math.max(scrolled / total * 100, 0), 95);
+    stepProgress.style.width = pct + '%';
+  });
+
+  // ── Progressive disclosure helpers ──
+  function toggleSection(bodyId, toggleId, label) {
+    var body = document.getElementById(bodyId);
+    var btn = document.getElementById(toggleId);
+    var isOpen = body.classList.contains('open');
+    body.classList.toggle('open');
+    btn.classList.toggle('expanded');
+    btn.querySelector('span').textContent = isOpen ? label : 'Show less';
+  }
+
+  function toggleAlert(alertId) {
+    var el = document.getElementById(alertId);
+    var body = document.getElementById(alertId + '-body');
+    el.classList.toggle('open');
+    body.classList.toggle('open');
+  }
+
+  function toggleFinCard(cardId) {
+    var card = document.getElementById(cardId);
+    var details = document.getElementById(cardId + '-details');
+    card.classList.toggle('open');
+    details.classList.toggle('open');
+  }
+
+  // #9: Deadline urgency escalation
+  (function() {
+    var deadlineDate = new Date('2026-03-20T15:00:00-04:00');
+    var countdownEl = document.querySelector('.footer-countdown');
+    function updateDeadline() {
+      var now = new Date();
+      var diff = deadlineDate - now;
+      if (diff <= 0) { countdownEl.textContent = 'Deadline passed'; countdownEl.className = 'footer-countdown urgency-critical'; return; }
+      var days = Math.floor(diff / 86400000);
+      var hours = Math.floor((diff % 86400000) / 3600000);
+      countdownEl.className = 'footer-countdown';
+      if (days > 5) { countdownEl.classList.add('urgency-green'); countdownEl.textContent = days + 'd ' + hours + 'h remaining'; }
+      else if (days >= 2) { countdownEl.classList.add('urgency-orange'); countdownEl.textContent = days + 'd ' + hours + 'h remaining'; }
+      else if (diff > 21600000) { countdownEl.classList.add('urgency-red'); countdownEl.textContent = days + 'd ' + hours + 'h remaining'; }
+      else { countdownEl.classList.add('urgency-critical'); countdownEl.textContent = hours + 'h ' + Math.floor((diff % 3600000)/60000) + 'm remaining'; }
+    }
+    updateDeadline();
+    setInterval(updateDeadline, 60000);
+  })();
+
+  // #6: Cash bar animated fill
+  (function() {
+    var cashReq = 20310.60;
+    var bankBal = 47822.14;
+    var ratio = (cashReq / bankBal) * 100;
+    var bar = document.getElementById('cash-bar-fill');
+    if (bar) {
+      setTimeout(function() {
+        bar.style.width = ratio + '%';
+        if (ratio < 50) bar.classList.add('sufficient');
+        else if (ratio < 80) bar.classList.add('caution');
+        else bar.classList.add('critical');
+      }, 400);
+    }
+  })();
+
+  // #10: Post-submit success animation
+  var confirmBtn = document.getElementById('confirm-btn');
+  if (confirmBtn) {
+    confirmBtn.addEventListener('click', function() {
+      if (!this.classList.contains('active')) return;
+      var modal = document.querySelector('#confirm-modal .modal');
+      modal.innerHTML = '<div class="success-state">' +
+        '<div class="success-check"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#dcfce7" stroke="#22c55e" stroke-width="3"/><polyline class="check-path" points="20,33 28,41 44,25" fill="none" stroke="#22c55e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' +
+        '<div class="success-title">Payroll Submitted</div>' +
+        '<div class="success-subtitle">Processing will begin shortly. You can edit until March 20 at 3:00 PM ET.</div>' +
+        '<div class="success-receipt">' +
+          '<div class="modal-row"><span class="modal-row-label">Employees</span><span class="modal-row-value">10</span></div>' +
+          '<div class="modal-row"><span class="modal-row-label">Pay date</span><span class="modal-row-value">03/25/2026</span></div>' +
+          '<div class="modal-row"><span class="modal-row-label">ACH debit</span><span class="modal-row-value">03/23/2026</span></div>' +
+          '<div class="modal-row modal-row-total"><span class="modal-row-label">Total</span><span class="modal-row-value">$20,310.60</span></div>' +
+        '</div>' +
+        '<div class="success-receipt-id">Payroll ID: PR-2026-W11-001</div>' +
+      '</div>' +
+      '<div class="success-footer">' +
+        '<button class="btn-success-secondary" onclick="document.getElementById(\'confirm-modal\').style.display=\'none\'">Close</button>' +
+        '<button class="btn-success-primary">View Transaction Status</button>' +
+      '</div>';
+    });
+  }
 </script>
 
 </body>
