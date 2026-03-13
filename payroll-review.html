@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Surf — Payroll Review & Submit (Redesigned)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+    background: #fafafa;
+    color: #1a1a1a;
+    font-size: 14px;
+    line-height: 1.5;
+    padding-bottom: 120px;
+    min-width: 1200px;
+  }
+
+  /* ── Top Nav ── */
+  .topnav {
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    width: 32px; height: 32px;
+    background: #111;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 700; font-size: 15px;
+  }
+  .brand { font-weight: 600; font-size: 16px; color: #111; letter-spacing: -0.02em; }
+  .topnav-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+  .topnav-right .emp-count {
+    font-size: 13px; color: #666;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .avatar-orange {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: #e8740e; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 13px;
+  }
+
+  /* ── Layout ── */
+  .layout { display: flex; }
+  .sidebar {
+    width: 52px;
+    background: #fff;
+    border-right: 1px solid #eee;
+    padding: 14px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    position: fixed;
+    top: 54px;
+    bottom: 0;
+    z-index: 90;
+  }
+  .sb-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: #aaa; cursor: pointer;
+  }
+  .sb-icon:hover { background: #f5f5f5; color: #666; }
+  .sb-icon.active { background: #f0f0f0; color: #111; }
+  .sb-icon svg { width: 20px; height: 20px; }
+
+  .main { margin-left: 52px; flex: 1; min-width: 0; }
+
+  /* ── Header Bar (sticky) ── */
+  .header-bar {
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    padding: 14px 28px;
+    position: sticky;
+    top: 54px;
+    z-index: 95;
+  }
+  .header-back {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 13px; color: #666; text-decoration: none;
+    margin-bottom: 14px;
+  }
+  .header-back:hover { color: #111; }
+  .header-meta { display: flex; align-items: center; gap: 36px; }
+  .hm-item { display: flex; align-items: center; gap: 8px; }
+  .hm-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .hm-dot-blue { background: #3b82f6; }
+  .hm-dot-red { background: #ef4444; }
+  .hm-dot-amber { background: #f59e0b; }
+  .hm-dot-green { background: #22c55e; }
+  .hm-label { font-size: 12px; color: #999; }
+  .hm-value { font-size: 13px; font-weight: 500; color: #111; }
+
+  /* ── Step Indicator ── */
+  .steps-bar {
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    padding: 12px 28px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .step { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #bbb; }
+  .step.done { color: #999; }
+  .step.active { color: #111; font-weight: 500; }
+  .step-num {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600;
+    background: #eee; color: #bbb;
+  }
+  .step.done .step-num { background: #22c55e; color: #fff; }
+  .step.active .step-num { background: #111; color: #fff; }
+  .step-line { width: 48px; height: 2px; margin: 0 10px; background: #eee; }
+  .step-line.done { background: #22c55e; }
+
+  /* ── Content (full width) ── */
+  .content { padding: 24px 28px; }
+
+  .section { margin-bottom: 28px; }
+  .section-label {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.06em; color: #999; margin-bottom: 14px;
+  }
+
+  /* ── Inline Decision Callout ── */
+  .decision-callout {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #f0ecff;
+    border: 1px solid #d4ccf0;
+    border-radius: 5px;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #6d28d9;
+    cursor: default;
+    vertical-align: middle;
+    margin-left: 8px;
+    letter-spacing: 0.02em;
+    position: relative;
+  }
+  .decision-callout:hover .decision-tip {
+    display: block;
+  }
+  .decision-tip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 10;
+    letter-spacing: 0;
+  }
+  .decision-tip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: #111;
+  }
+
+  /* ── Collapsible Design Rationale ── */
+  .rationale {
+    background: #f8f8ff;
+    border: 1px dashed #c7c7f0;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-size: 12px;
+    color: #555;
+    line-height: 1.7;
+  }
+  .rationale-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .rationale-header:hover { background: #f0eefa; border-radius: 8px; }
+  .rationale-title {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600; color: #4f46e5;
+  }
+  .rationale-toggle {
+    font-size: 12px; color: #8b7fcc; font-weight: 500;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .rationale-toggle svg {
+    transition: transform 0.2s;
+  }
+  .rationale.collapsed .rationale-toggle svg {
+    transform: rotate(-90deg);
+  }
+  .rationale-body {
+    padding: 0 20px 16px;
+    overflow: hidden;
+    max-height: 500px;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+  }
+  .rationale.collapsed .rationale-body {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .rationale ol {
+    padding-left: 22px;
+    margin: 0;
+    counter-reset: none;
+  }
+  .rationale ol li {
+    padding: 3px 0;
+    padding-left: 4px;
+  }
+  .rationale ol li::marker {
+    color: #4f46e5;
+    font-weight: 700;
+  }
+
+  /* ── Metric Cards ── */
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 14px; }
+  .metric {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .metric-label { font-size: 12px; color: #999; margin-bottom: 2px; }
+  .metric-value { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 4px; font-variant-numeric: tabular-nums; }
+  .metric-change { font-size: 12px; display: flex; align-items: center; gap: 4px; }
+  .mc-down { color: #16a34a; }
+  .mc-up { color: #ef4444; }
+  .mc-neutral { color: #999; }
+  .metric-prev { font-size: 11px; color: #bbb; margin-top: 2px; }
+
+  /* ── AI Insights (structured cards) ── */
+  .insights-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .insight-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .insight-card.highlight {
+    border-color: #fde68a;
+    background: #fffef5;
+  }
+  .insight-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 15px;
+  }
+  .insight-icon-green { background: #dcfce7; color: #16a34a; }
+  .insight-icon-blue { background: #dbeafe; color: #2563eb; }
+  .insight-icon-amber { background: #fef3c7; color: #d97706; }
+  .insight-icon-purple { background: #f3e8ff; color: #7c3aed; }
+  .insight-icon-gray { background: #f3f4f6; color: #6b7280; }
+  .insight-icon-red { background: #fee2e2; color: #dc2626; }
+  .insight-content { flex: 1; min-width: 0; }
+  .insight-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }
+  .insight-value { font-size: 15px; font-weight: 700; color: #111; font-variant-numeric: tabular-nums; }
+  .insight-detail { font-size: 12px; color: #666; margin-top: 3px; line-height: 1.5; }
+  .insight-detail strong { color: #111; }
+
+  .ai-source {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #f3f3f3;
+  }
+  .ai-source-badge {
+    background: #111; color: #fff;
+    font-size: 9px; font-weight: 700;
+    padding: 2px 6px; border-radius: 3px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .ai-source-text { font-size: 11px; color: #aaa; }
+
+  /* ── Alert Cards ── */
+  .alert {
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .alert-icon { width: 20px; height: 20px; flex-shrink: 0; margin-top: 1px; }
+  .alert-content { flex: 1; min-width: 0; }
+  .alert-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .alert-body { font-size: 13px; line-height: 1.6; }
+  .alert-actions { display: flex; gap: 12px; margin-top: 8px; align-items: center; }
+  .alert-link { font-size: 12px; font-weight: 600; text-decoration: none; display: inline-block; }
+  .alert-link-secondary { font-size: 12px; color: #888; text-decoration: none; }
+  .alert-link-secondary:hover { color: #555; }
+
+  .alert-yellow { background: #fffbeb; border: 1px solid #fde68a; }
+  .alert-yellow .alert-title { color: #92400e; }
+  .alert-yellow .alert-body { color: #a16207; }
+  .alert-yellow .alert-link { color: #d97706; }
+
+  .alert-orange { background: #fff7ed; border: 1px solid #fed7aa; }
+  .alert-orange .alert-title { color: #9a3412; }
+  .alert-orange .alert-body { color: #c2410c; }
+  .alert-orange .alert-link { color: #ea580c; }
+
+  .alert-red { background: #fef2f2; border: 1px solid #fecaca; }
+  .alert-red .alert-title { color: #991b1b; }
+  .alert-red .alert-body { color: #b91c1c; }
+  .alert-red .alert-link { color: #dc2626; }
+
+  .alert-list { margin-top: 6px; padding: 0; list-style: none; }
+  .alert-list li {
+    font-size: 12px; padding: 3px 0;
+    display: flex; align-items: baseline; gap: 6px;
+    color: inherit;
+  }
+  .alert-list li::before { content: "\2022"; flex-shrink: 0; }
+
+  /* ── Employee Table ── */
+  .table-controls {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .table-controls-left { display: flex; align-items: center; gap: 14px; }
+  .toggle {
+    display: inline-flex; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;
+  }
+  .toggle-btn {
+    padding: 7px 14px; font-size: 13px; border: none;
+    background: #fff; color: #888; cursor: pointer;
+  }
+  .toggle-btn.active { background: #111; color: #fff; font-weight: 500; }
+  .toggle-btn:not(.active):hover { background: #f9f9f9; }
+
+  .search-input {
+    border: 1px solid #ddd; border-radius: 8px;
+    padding: 7px 12px; font-size: 13px; width: 200px;
+    outline: none; color: #111;
+  }
+  .search-input:focus { border-color: #999; }
+
+  table.emp-table {
+    width: 100%; background: #fff;
+    border: 1px solid #eee; border-radius: 10px;
+    border-spacing: 0; overflow: hidden;
+  }
+  table.emp-table thead { background: #fafafa; }
+  table.emp-table th {
+    padding: 10px 14px; font-size: 11px; font-weight: 600;
+    color: #999; text-align: left; border-bottom: 1px solid #eee;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  table.emp-table td {
+    padding: 12px 14px; font-size: 13px; color: #111;
+    border-bottom: 1px solid #f5f5f5;
+    white-space: nowrap;
+  }
+  table.emp-table tr:last-child td { border-bottom: none; }
+  .row-hl { background: #fffde7; }
+  .emp-name { display: flex; align-items: center; gap: 10px; }
+  .emp-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 600; color: #fff; flex-shrink: 0;
+  }
+  .emp-id { font-size: 11px; color: #aaa; }
+  .badge {
+    font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px;
+  }
+  .badge-hourly { background: #dbeafe; color: #1e40af; }
+  .badge-salary { background: #f3e8ff; color: #6b21a8; }
+  .badge-contractor { background: #d1fae5; color: #065f46; }
+  .prev-val { font-size: 11px; color: #bbb; text-decoration: line-through; display: block; }
+  .new-val { color: #16a34a; }
+  .delta-down { color: #16a34a; font-size: 11px; }
+  .delta-up { color: #ef4444; font-size: 11px; }
+  .table-foot {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 14px; background: #fafafa;
+    font-size: 12px; font-weight: 600; color: #111;
+    border-top: 1px solid #eee;
+  }
+
+  /* ── Financial Summary ── */
+  .fin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .fin-card {
+    background: #fff; border: 1px solid #eee; border-radius: 10px; padding: 18px 20px;
+  }
+  .fin-title {
+    font-size: 13px; font-weight: 600; color: #111;
+    margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #f3f3f3;
+  }
+  .fin-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 13px; }
+  .fin-label { color: #666; }
+  .fin-val { color: #111; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .fin-delta { font-size: 11px; color: #999; font-weight: 400; margin-left: 6px; }
+  .fin-delta-down { color: #16a34a; }
+  .fin-delta-up { color: #ef4444; }
+  .fin-total {
+    border-top: 2px solid #eee; margin-top: 10px; padding-top: 10px;
+    font-weight: 700;
+  }
+  .fin-total .fin-label { color: #111; }
+  .fin-comparison-label {
+    font-size: 11px; color: #bbb; text-align: right;
+    margin-bottom: 8px;
+  }
+
+  /* ── Scroll Sentinel ── */
+  #scroll-sentinel {
+    height: 1px;
+    width: 100%;
+  }
+
+  /* ── Sticky Footer (with cash requirement) ── */
+  .footer {
+    position: fixed; bottom: 0; left: 52px; right: 0;
+    background: #fff; border-top: 1px solid #eee;
+    z-index: 100;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.04);
+  }
+  .footer-cash {
+    background: #111;
+    padding: 12px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .cash-left { display: flex; align-items: center; gap: 16px; }
+  .cash-label { color: #888; font-size: 13px; }
+  .cash-value { color: #fff; font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .cash-right { display: flex; align-items: center; gap: 14px; }
+  .bank-info { text-align: right; }
+  .bank-label { color: #666; font-size: 11px; }
+  .bank-balance { color: #fff; font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .bank-sufficient {
+    font-size: 9px; font-weight: 700;
+    padding: 2px 6px; border-radius: 3px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-left: 8px;
+  }
+  .bank-ok { background: rgba(34,197,94,0.15); color: #4ade80; }
+  .bank-timestamp { color: #555; font-size: 10px; display: block; margin-top: 1px; }
+
+  .footer-actions {
+    padding: 10px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+  }
+  .footer-left { display: flex; align-items: center; gap: 10px; }
+  .footer-deadline { font-size: 13px; color: #666; }
+  .footer-deadline strong { color: #111; }
+  .footer-countdown {
+    font-size: 11px; font-weight: 600; color: #e8740e;
+    background: #fff7ed; padding: 3px 8px; border-radius: 4px;
+  }
+  .footer-right { display: flex; align-items: center; gap: 10px; }
+  .btn-ghost {
+    padding: 9px 18px; border: 1px solid #ddd; border-radius: 8px;
+    background: #fff; font-size: 13px; font-weight: 500; color: #666; cursor: pointer;
+  }
+  .btn-ghost:hover { border-color: #999; color: #111; }
+  .btn-submit {
+    padding: 9px 22px; border: none; border-radius: 8px;
+    font-size: 13px; font-weight: 600;
+    color: #fff; cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+  }
+  .btn-submit.disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  .btn-submit.enabled {
+    background: #e8740e;
+  }
+  .btn-submit.enabled:hover { background: #d4680d; }
+  .scroll-hint {
+    font-size: 11px; color: #bbb;
+    margin-right: 4px;
+    transition: opacity 0.3s;
+  }
+  .scroll-hint.hidden { opacity: 0; pointer-events: none; }
+
+  /* ── Confirmation Modal ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000;
+  }
+  .modal {
+    background: #fff;
+    border-radius: 14px;
+    width: 480px;
+    box-shadow: 0 24px 48px rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
+  .modal-header {
+    padding: 24px 28px 0;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .modal-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: #fff7ed; border: 1px solid #fed7aa;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .modal-title { font-size: 17px; font-weight: 700; color: #111; }
+  .modal-subtitle { font-size: 13px; color: #888; margin-top: 2px; }
+  .modal-body { padding: 20px 28px; }
+  .modal-summary {
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 18px;
+  }
+  .modal-row {
+    display: flex; justify-content: space-between; padding: 5px 0; font-size: 13px;
+  }
+  .modal-row-label { color: #666; }
+  .modal-row-value { font-weight: 600; color: #111; font-variant-numeric: tabular-nums; }
+  .modal-row-total {
+    border-top: 2px solid #eee; margin-top: 8px; padding-top: 8px;
+  }
+  .modal-row-total .modal-row-label { color: #111; font-weight: 700; }
+  .modal-row-total .modal-row-value { font-size: 16px; font-weight: 700; color: #111; }
+  .modal-alert-count {
+    display: flex; gap: 12px; margin-bottom: 18px;
+  }
+  .modal-alert-badge {
+    font-size: 12px; font-weight: 500;
+    padding: 4px 10px; border-radius: 6px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .modal-alert-badge-yellow { background: #fef9c3; color: #92400e; }
+  .modal-alert-badge-red { background: #fee2e2; color: #991b1b; }
+  .modal-alert-badge-green { background: #dcfce7; color: #166534; }
+
+  .modal-confirm-label {
+    font-size: 13px; color: #666; margin-bottom: 8px;
+  }
+  .modal-confirm-label strong { color: #111; }
+  .modal-confirm-input {
+    width: 100%; padding: 10px 14px; border: 2px solid #ddd;
+    border-radius: 8px; font-size: 14px; font-family: inherit;
+    outline: none; color: #111;
+    letter-spacing: 0.06em;
+  }
+  .modal-confirm-input:focus { border-color: #e8740e; }
+  .modal-confirm-input::placeholder { color: #ccc; letter-spacing: 0.06em; }
+
+  .modal-footer {
+    padding: 0 28px 24px;
+    display: flex; gap: 10px; justify-content: flex-end;
+  }
+  .modal-btn-cancel {
+    padding: 10px 20px; border: 1px solid #ddd; border-radius: 8px;
+    background: #fff; font-size: 13px; font-weight: 500; color: #666; cursor: pointer;
+  }
+  .modal-btn-confirm {
+    padding: 10px 24px; border: none; border-radius: 8px;
+    background: #ccc; font-size: 13px; font-weight: 600;
+    color: #fff; cursor: not-allowed;
+  }
+  .modal-btn-confirm.active {
+    background: #e8740e; cursor: pointer;
+  }
+  .modal-btn-confirm.active:hover { background: #d4680d; }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="topnav">
+  <div class="logo">S</div>
+  <span class="brand">Surf</span>
+  <div class="topnav-right">
+    <span class="emp-count">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      43 Employees
+    </span>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+    <div class="avatar-orange">JD</div>
+  </div>
+</div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+  <div class="sb-icon active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+  <div class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+  <div class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/></svg></div>
+  <div class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg></div>
+</div>
+
+<div class="main">
+
+<!-- HEADER -->
+<div class="header-bar">
+  <a href="#" class="header-back">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>
+    Back to Payroll
+  </a>
+  <div class="header-meta">
+    <div class="hm-item">
+      <div class="hm-dot hm-dot-blue"></div>
+      <div><div class="hm-label">Pay Schedule</div><div class="hm-value">Weekly</div></div>
+    </div>
+    <div class="hm-item">
+      <div class="hm-dot hm-dot-red"></div>
+      <div><div class="hm-label">Pay Period</div><div class="hm-value">03/09/2026 – 03/15/2026</div></div>
+    </div>
+    <div class="hm-item">
+      <div class="hm-dot hm-dot-amber"></div>
+      <div><div class="hm-label">Approval Deadline</div><div class="hm-value">3pm ET – 03/20/2026</div></div>
+    </div>
+    <div class="hm-item">
+      <div class="hm-dot hm-dot-green"></div>
+      <div><div class="hm-label">Pay Date</div><div class="hm-value">03/25/2026</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- STEPS -->
+<div class="steps-bar">
+  <div class="step done">
+    <div class="step-num"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg></div>
+    Earnings Review
+  </div>
+  <div class="step-line done"></div>
+  <div class="step active">
+    <div class="step-num">2</div>
+    Review & Submit
+  </div>
+  <div class="step-line"></div>
+  <div class="step">
+    <div class="step-num">3</div>
+    Confirmation
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+<!-- Collapsible Design Rationale -->
+<div class="rationale" id="rationale">
+  <div class="rationale-header" onclick="document.getElementById('rationale').classList.toggle('collapsed')">
+    <div class="rationale-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Design Rationale — 8 decisions (hover purple badges to see which)
+    </div>
+    <div class="rationale-toggle">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+  </div>
+  <div class="rationale-body">
+    <ol>
+      <li><strong>Structured AI insight cards</strong> — replace text-blob summary with scannable cards, each with a value, label, and context</li>
+      <li><strong>Compliance alerts before employee data</strong> — with actionable CTAs (send reminder, fix registration, complete I-9)</li>
+      <li><strong>Read-only employee table</strong> — no inline editing on final summary; clear review-mode boundary</li>
+      <li><strong>Sticky header bar</strong> — pay period and deadline always visible while scrolling</li>
+      <li><strong>Bank balance alongside cash requirement</strong> — with staleness timestamp; worth the engineering lift</li>
+      <li><strong>Delta vs. last payroll on every line item</strong> — financial summary, metric cards, and employee table all show comparison</li>
+      <li><strong>Typed "CONFIRM" modal before submission</strong> — high-stakes friction for an irreversible action</li>
+      <li><strong>Scroll-to-review gating</strong> — submit disabled until full page reviewed; eliminates dead-end modals and 4-state post-submit</li>
+    </ol>
+  </div>
+</div>
+
+<!-- SECTION 1: OVERVIEW + AI INSIGHTS -->
+<div class="section">
+  <div class="section-label">
+    Payroll Overview
+    <span class="decision-callout">D6 <span class="decision-tip">Delta vs. last payroll on every line item</span></span>
+  </div>
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-label">Total Net Pay</div>
+      <div class="metric-value">$18,032.27</div>
+      <div class="metric-change mc-neutral">— No change vs. last period</div>
+      <div class="metric-prev">Last: $18,032.27</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Total Taxes</div>
+      <div class="metric-value">$2,278.33</div>
+      <div class="metric-change mc-down">&#8595; $11.44 vs. last period</div>
+      <div class="metric-prev">Last: $2,289.77</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Total Employer Cost</div>
+      <div class="metric-value">$20,655.60</div>
+      <div class="metric-change mc-down">&#8595; $11.44 vs. last period</div>
+      <div class="metric-prev">Last: $20,667.04</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Employees Paid</div>
+      <div class="metric-value">10</div>
+      <div class="metric-change mc-neutral">— Same as last period</div>
+      <div class="metric-prev">4 not eligible this run</div>
+    </div>
+  </div>
+
+  <!-- AI Insights as structured cards -->
+  <div class="insights-grid">
+    <div class="insight-card">
+      <div class="insight-icon insight-icon-green">&#8595;</div>
+      <div class="insight-content">
+        <div class="insight-label">Cash Requirement Change</div>
+        <div class="insight-value">-$11.44</div>
+        <div class="insight-detail">Driven by reduced employer tax obligations. Federal Unemployment Tax <strong>-$5.76</strong>, CA State Unemployment <strong>-$5.38</strong>.</div>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon insight-icon-blue">3</div>
+      <div class="insight-content">
+        <div class="insight-label">Employees With Changes</div>
+        <div class="insight-value">Jacob, Lucas, Olivia</div>
+        <div class="insight-detail">Tax reductions of <strong>$7.26</strong>, <strong>$0</strong>, and <strong>$4.18</strong> respectively. No benefit or deduction changes.</div>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon insight-icon-gray">&#10003;</div>
+      <div class="insight-content">
+        <div class="insight-label">Benefits & Deductions</div>
+        <div class="insight-value">No changes</div>
+        <div class="insight-detail">All 401k and medical elections unchanged. Post-tax deductions consistent across all employees.</div>
+      </div>
+    </div>
+    <div class="insight-card highlight">
+      <div class="insight-icon insight-icon-amber">!</div>
+      <div class="insight-content">
+        <div class="insight-label">Not Eligible</div>
+        <div class="insight-value">4 employees excluded</div>
+        <div class="insight-detail">2 incomplete onboarding, 1 employer setup pending, 1 start date after pay period.</div>
+      </div>
+    </div>
+    <div class="insight-card highlight">
+      <div class="insight-icon insight-icon-red">&#9888;</div>
+      <div class="insight-content">
+        <div class="insight-label">Compliance Risk</div>
+        <div class="insight-value">2 open items</div>
+        <div class="insight-detail">Missing state tax registration (AK, AL) and 1 pending I-9 due <strong>Mar 17</strong>.</div>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon insight-icon-purple">%</div>
+      <div class="insight-content">
+        <div class="insight-label">Tax-to-Pay Ratio</div>
+        <div class="insight-value">12.6%</div>
+        <div class="insight-detail">Effective total tax rate this period. Within normal range — last period was <strong>12.7%</strong>.</div>
+      </div>
+    </div>
+  </div>
+  <div class="ai-source">
+    <span class="ai-source-badge">AI</span>
+    <span class="ai-source-text">Insights generated from payroll comparison analysis &middot; Last updated just now</span>
+    <span class="decision-callout">D1 <span class="decision-tip">Structured AI insight cards, not a text blob</span></span>
+  </div>
+</div>
+
+<!-- SECTION 2: ALERTS -->
+<div class="section">
+  <div class="section-label">
+    Compliance & Risk Alerts
+    <span class="decision-callout">D2 <span class="decision-tip">Compliance alerts surfaced before employee data</span></span>
+  </div>
+
+  <div class="alert alert-yellow">
+    <div class="alert-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" fill="#f59e0b"/><line x1="12" y1="9" x2="12" y2="13" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="#fff"/></svg></div>
+    <div class="alert-content">
+      <div class="alert-title">2 states have incomplete tax registration</div>
+      <div class="alert-body">Employees in <strong>Alaska</strong> and <strong>Alabama</strong> may have incorrect withholdings. Unemployment tax account numbers and withholding rates are missing.</div>
+      <div class="alert-actions">
+        <a href="#" class="alert-link">Fix now — Go to State Taxes &#8594;</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-orange">
+    <div class="alert-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#f97316"/><line x1="12" y1="8" x2="12" y2="12" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16" r="1" fill="#fff"/></svg></div>
+    <div class="alert-content">
+      <div class="alert-title">4 employees excluded from this payroll</div>
+      <ul class="alert-list">
+        <li><strong>Emma Wilson</strong> — Waiting for employee to complete onboarding (Start date: Dec 01, 2025)</li>
+        <li><strong>Alex Chen</strong> — Setup not completed by employer</li>
+        <li><strong>Sarah Kim</strong> — Setup not completed by employer</li>
+        <li><strong>David Park</strong> — Joining date falls on Mar 26, 2026</li>
+      </ul>
+      <div class="alert-actions">
+        <a href="#" class="alert-link">Review excluded employees &#8594;</a>
+        <a href="#" class="alert-link-secondary">Send onboarding reminders</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-red">
+    <div class="alert-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#ef4444"/><line x1="12" y1="8" x2="12" y2="12" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16" r="1" fill="#fff"/></svg></div>
+    <div class="alert-content">
+      <div class="alert-title">1 employee has a pending I-9 — deadline: March 17, 2026</div>
+      <div class="alert-body"><strong>Hannah Coleman</strong> skipped I-9 verification during onboarding. Federal law requires completion within 3 business days of start date.</div>
+      <div class="alert-actions">
+        <a href="#" class="alert-link">Complete I-9 now &#8594;</a>
+        <a href="#" class="alert-link-secondary">Send reminder to employee</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3: EMPLOYEE TABLE -->
+<div class="section">
+  <div class="table-controls">
+    <div class="table-controls-left">
+      <div class="section-label" style="margin-bottom:0">
+        Employee Review
+        <span class="decision-callout">D3 <span class="decision-tip">Read-only table — no editing on final summary</span></span>
+      </div>
+      <div class="toggle">
+        <button class="toggle-btn active">Changes only (3)</button>
+        <button class="toggle-btn">All employees (10)</button>
+      </div>
+    </div>
+    <input class="search-input" type="text" placeholder="Search by name...">
+  </div>
+
+  <table class="emp-table">
+    <thead>
+      <tr>
+        <th style="width:220px">Employee</th>
+        <th style="width:90px">Type</th>
+        <th style="width:110px">Gross Pay</th>
+        <th style="width:120px">Taxes</th>
+        <th style="width:110px">Deductions</th>
+        <th style="width:120px">Net Pay</th>
+        <th style="width:80px">vs. Last</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="row-hl">
+        <td>
+          <div class="emp-name">
+            <div class="emp-avatar" style="background:#6366f1">JD</div>
+            <div><div style="font-weight:600">Jacob Davis</div><div class="emp-id">EMP-15</div></div>
+          </div>
+        </td>
+        <td><span class="badge badge-hourly">Hourly</span></td>
+        <td>$861.80</td>
+        <td><span class="prev-val">$125.44</span><span class="new-val">$118.18 &#8595;</span></td>
+        <td>$10.00</td>
+        <td><span class="prev-val">$826.06</span><span class="new-val">$832.10 &#8593;</span></td>
+        <td><span class="delta-down">-$7.26 tax</span></td>
+      </tr>
+      <tr class="row-hl">
+        <td>
+          <div class="emp-name">
+            <div class="emp-avatar" style="background:#ec4899">LW</div>
+            <div><div style="font-weight:600">Lucas White</div><div class="emp-id">EMP-10</div></div>
+          </div>
+        </td>
+        <td><span class="badge badge-salary">Salary</span></td>
+        <td>$2,000.00</td>
+        <td>$306.63</td>
+        <td><span class="prev-val">$30.00</span><span class="new-val">$20.00 &#8595;</span></td>
+        <td>$1,674.47</td>
+        <td><span class="delta-down">-$10 ded.</span></td>
+      </tr>
+      <tr class="row-hl">
+        <td>
+          <div class="emp-name">
+            <div class="emp-avatar" style="background:#14b8a6">OC</div>
+            <div><div style="font-weight:600">Olivia Carter</div><div class="emp-id">EMP-12</div></div>
+          </div>
+        </td>
+        <td><span class="badge badge-salary">Salary</span></td>
+        <td>$1,200.00</td>
+        <td><span class="prev-val">$161.75</span><span class="new-val">$155.75 &#8595;</span></td>
+        <td>$10.00</td>
+        <td>$967.80</td>
+        <td><span class="delta-down">-$4.18 tax</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="table-foot">
+    <span>Showing 3 changed employees of 10 total</span>
+    <span>Total Net Pay: $18,032.27</span>
+  </div>
+</div>
+
+<!-- SECTION 4: FINANCIAL SUMMARY -->
+<div class="section">
+  <div class="section-label">Financial Summary</div>
+  <div class="fin-comparison-label">All amounts compared to last payroll (03/02 – 03/08)</div>
+  <div class="fin-grid">
+    <div class="fin-card">
+      <div class="fin-title">Accounting Summary</div>
+      <div class="fin-row"><span class="fin-label">Net Pay</span><span class="fin-val">$18,032.27 <span class="fin-delta">—</span></span></div>
+      <div class="fin-row"><span class="fin-label">Benefits Contributions</span><span class="fin-val">$125.00 <span class="fin-delta">—</span></span></div>
+      <div class="fin-row"><span class="fin-label">Employee Taxes</span><span class="fin-val">$1,351.53 <span class="fin-delta fin-delta-down">-$11.44</span></span></div>
+      <div class="fin-row"><span class="fin-label">Company Taxes</span><span class="fin-val">$926.80 <span class="fin-delta">—</span></span></div>
+      <div class="fin-row"><span class="fin-label">Post Deduction</span><span class="fin-val">$220.00 <span class="fin-delta">—</span></span></div>
+      <div class="fin-row"><span class="fin-label">Cash Tips</span><span class="fin-val">$0 <span class="fin-delta">—</span></span></div>
+      <div class="fin-row fin-total"><span class="fin-label">Total Payroll Liability</span><span class="fin-val">$20,655.60 <span class="fin-delta fin-delta-down">-$11.44</span></span></div>
+    </div>
+    <div class="fin-card">
+      <div class="fin-title">Bank Withdrawal Summary</div>
+      <div class="fin-row"><span class="fin-label">Direct Deposit Amount</span><span class="fin-val">$18,032.27 <span class="fin-delta">—</span></span></div>
+      <div class="fin-row"><span class="fin-label">Taxes Amount</span><span class="fin-val">$2,278.33 <span class="fin-delta fin-delta-down">-$11.44</span></span></div>
+      <div class="fin-row"><span class="fin-label">Garnishments</span><span class="fin-val">$0 <span class="fin-delta">—</span></span></div>
+      <div class="fin-row fin-total"><span class="fin-label">Cash Requirement</span><span class="fin-val">$20,310.60 <span class="fin-delta fin-delta-down">-$11.44</span></span></div>
+    </div>
+    <div class="fin-card">
+      <div class="fin-title">Employer Handled Obligations</div>
+      <div class="fin-row"><span class="fin-label">Benefits Contributions</span><span class="fin-val">$125.00 <span class="fin-delta">—</span></span></div>
+      <div class="fin-row"><span class="fin-label">Unemployment Tax</span><span class="fin-val">$0 <span class="fin-delta">—</span></span></div>
+      <div class="fin-row"><span class="fin-label">Garnishments (Managed)</span><span class="fin-val">$0 <span class="fin-delta">—</span></span></div>
+      <div class="fin-row"><span class="fin-label">Other Deductions</span><span class="fin-val">$220.00 <span class="fin-delta">—</span></span></div>
+      <div class="fin-row"><span class="fin-label">Cash Tips</span><span class="fin-val">$0 <span class="fin-delta">—</span></span></div>
+      <div class="fin-row fin-total"><span class="fin-label">Total</span><span class="fin-val">$345.00 <span class="fin-delta">—</span></span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Scroll sentinel — submit enables when this is visible -->
+<div id="scroll-sentinel"></div>
+
+</div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- STICKY FOOTER (cash requirement + actions) -->
+<div class="footer">
+  <div class="footer-cash">
+    <div class="cash-left">
+      <span class="cash-label">Cash Requirement</span>
+      <span class="cash-value">$20,310.60</span>
+      <span class="decision-callout" style="background:rgba(99,72,255,0.15);border-color:rgba(99,72,255,0.3);color:#c4b5fd;margin-left:12px;">D5 <span class="decision-tip" style="bottom:auto;top:calc(100% + 6px);">Bank balance alongside cash requirement</span></span>
+    </div>
+    <div class="cash-right">
+      <div class="bank-info">
+        <span class="bank-label">Checking ****8902</span>
+        <div>
+          <span class="bank-balance">$47,822.14</span>
+          <span class="bank-sufficient bank-ok">Sufficient</span>
+        </div>
+        <span class="bank-timestamp">Balance as of 4:12 PM ET today</span>
+      </div>
+    </div>
+  </div>
+  <div class="footer-actions">
+    <div class="footer-left">
+      <div class="footer-deadline">Edit deadline: <strong>March 20, 2026 at 3:00 PM ET</strong>
+        <span class="decision-callout" style="margin-left:6px;">D4 <span class="decision-tip">Sticky header + footer keep deadline always visible</span></span>
+      </div>
+      <div class="footer-countdown">~8 days remaining</div>
+    </div>
+    <div class="footer-right">
+      <span class="scroll-hint" id="scroll-hint">&#8595; Scroll to review all sections</span>
+      <button class="btn-ghost">Save Draft</button>
+      <button class="btn-submit disabled" id="submit-btn" onclick="if(this.classList.contains('enabled')){document.getElementById('confirm-modal').style.display='flex'}">
+        Submit Payroll
+        <span class="decision-callout" style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:#fff;margin-left:6px;font-size:9px;">D8 <span class="decision-tip">Scroll-to-review gating</span></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRMATION MODAL -->
+<div class="modal-overlay" id="confirm-modal" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-icon">&#9888;</div>
+      <div>
+        <div class="modal-title">Confirm Payroll Submission
+          <span class="decision-callout" style="font-size:9px;vertical-align:middle;">D7 <span class="decision-tip">Typed CONFIRM modal — high-stakes friction</span></span>
+        </div>
+        <div class="modal-subtitle">This action cannot be undone after processing begins.</div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-summary">
+        <div class="modal-row">
+          <span class="modal-row-label">Employees paid</span>
+          <span class="modal-row-value">10</span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-row-label">Pay period</span>
+          <span class="modal-row-value">03/09 – 03/15/2026</span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-row-label">Pay date</span>
+          <span class="modal-row-value">03/25/2026</span>
+        </div>
+        <div class="modal-row modal-row-total">
+          <span class="modal-row-label">Cash requirement</span>
+          <span class="modal-row-value">$20,310.60</span>
+        </div>
+      </div>
+
+      <div class="modal-alert-count">
+        <span class="modal-alert-badge modal-alert-badge-yellow">&#9888; 2 warnings</span>
+        <span class="modal-alert-badge modal-alert-badge-red">&#9679; 1 critical</span>
+        <span class="modal-alert-badge modal-alert-badge-green">&#10003; Bank balance sufficient</span>
+      </div>
+
+      <div>
+        <div class="modal-confirm-label">Type <strong>CONFIRM</strong> to submit this payroll</div>
+        <input class="modal-confirm-input" type="text" placeholder="CONFIRM" oninput="
+          var btn = document.getElementById('confirm-btn');
+          if(this.value === 'CONFIRM') { btn.classList.add('active'); btn.style.cursor='pointer'; }
+          else { btn.classList.remove('active'); btn.style.cursor='not-allowed'; }
+        ">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn-cancel" onclick="document.getElementById('confirm-modal').style.display='none'">Cancel</button>
+      <button class="modal-btn-confirm" id="confirm-btn">Submit Payroll</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scroll-to-bottom detection -->
+<script>
+  var sentinel = document.getElementById('scroll-sentinel');
+  var submitBtn = document.getElementById('submit-btn');
+  var scrollHint = document.getElementById('scroll-hint');
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        submitBtn.classList.remove('disabled');
+        submitBtn.classList.add('enabled');
+        scrollHint.classList.add('hidden');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  observer.observe(sentinel);
+</script>
+
+</body>
+</html>
